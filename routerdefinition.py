@@ -1,9 +1,9 @@
+import json
 #------------------------------------------------------------------------------------------------------------ D E F I N I C E   R O U T E R Ů ----------------------------------------------------------------------------------------------------------------------#
 #
 #
 #
 #------------------------------------------------------------------------------------------------------------- G L O B Á L N Í   L I S T Y -------------------------------------------------------------------------------------------------------------------------#
-routers = {}
 routerlist = {}
 neighbours = []
 #
@@ -21,47 +21,43 @@ while menu:
     vyber = int(input('Vyber možnost: '))
     #-------------------------------------------------------------------------------------------------- Vytvoření routeru se zadáním názvu a souřadnic -------------------------------------------------------------------------------------------------------------#
     if vyber == 1:
-        routeramount = int((len(routerlist))+1)
-        routerlist['routerid'] = routeramount
         routername = str(input('Zadej název routeru: '))
         coordx = int(input(f"Zadej umístění {routername} na ose X: "))
         coordy = int(input(f"Zadej umístění {routername} na ose Y: "))
-        routerlist['routers'] = {'routername': routername, 'coordx': coordx, 'coordy': coordy}
+        routerlist[routername] = {'routername': routername, 'coordx': coordx, 'coordy': coordy}
         print('Router s názvem',routername,'byl vytvořen na souřadnicích X:',coordx,'Y:',coordy)
-        print(routerlist)
     #----------------------------------------------------------------------------------------------------------- Hledání sousedních routerů ------------------------------------------------------------------------------------------------------------------------#
     elif vyber == 2:
         #Proměnná pro opakovní cyklu
-        opakovani = int(0)
+        opakovani = int(1)
         #Množství routerů (routeramount) = počet hodnot v globálním arrayi routerlist / 3. Používá se pro určení počtu opakování while cyklu
-        routeramount = int((len(routerlist))/3)
+        pocetrouteru = int(len(routerlist))
         #Volba routeru (routerchoice) je integer použitý k výběru konkrétní hodnoty z globálního arraye routers
-        routerchoice = int(input('Zadej cislo routeru: '))
-        while opakovani <= (routeramount * 3):
+        routerchoicea = input('Zadej název prvního routeru: ')
+        routerchoiceb = input('Zadej název druhého routeru: ')
+        while opakovani == 1:
             # Pokud jsou obě souřadnice následujícího routeru v globálním arrayi routers blíž než 100, přidej tento následující router do globálního arraye neighbours
-            if abs(routers[routerchoice + ((opakovani + 4))] - routers[routerchoice + 1]) < 100 and abs(routers[routerchoice + (opakovani + 5)] - routers[routerchoice + 2]) < 100:
-                print ('Router', routers[routerchoice + (opakovani * 3)],' je sousedem routeru', routers[routerchoice])
-                neighbours.append(routerchoice)
-                opakovani += 3
+            routacoordx = routerlist[routerchoicea]['coordx']
+            routbcoordx = routerlist[routerchoiceb]['coordx']
+            routacoordy = routerlist[routerchoicea]['coordy']
+            routbcoordy = routerlist[routerchoiceb]['coordy']
+            if abs((routacoordx) - (routbcoordx)) < 100 and abs((routacoordy) - (routbcoordy)) < 100:
+                print ('Router', routerlist[routerchoicea],' je sousedem routeru', routerlist[routerchoiceb])
+                neighbours.append(routerchoiceb)
+                opakovani += 1
             else:
-                print ('Router', routers[routerchoice + (opakovani * 3)],' neni sousedem routeru', routers[routerchoice])
-                opakovani += 3
+                print ('Router', routerlist[routerchoicea],' neni sousedem routeru', routerlist[routerchoiceb])
+                opakovani += 1
     #-------------------------------------------------------------------------------------------------------- Vypsání všech zadaných routerů -----------------------------------------------------------------------------------------------------------------------#
     elif vyber == 5:
-        print (routerlist)
-        #Množství routerů (routeramount) = počet hodnot v globálním arrayi routers / 3
-        routeramount = int((len(routers))/3)
-        print ('Počet routerů je: ',routeramount)
+        vypisrouteru = json.dumps(routerlist,sort_keys=True, indent=4)
+        print(vypisrouteru)
+        pocetrouteru = int(len(routerlist))
+        print('Celkový počet routerů je: ', pocetrouteru)
     #----------------------------------------------------------------------------------------------------------Vypsání konkrétního routeru--------------------------------------------------------------------------------------------------------------------------#
     elif vyber == 6:
-        routerchoice = int(input('Zadej cislo routeru: '))
-        routernumber = int(0)
-        #Když je vybrán router s číslem 1, vrať hodnotu 0 z globálního arraye routers + souřadnice, jinak vyber příslušnou hodnotu z globálního arraye routers + souřadnice
-        if routerchoice == 1:
-            routernumber = routernumber
-        else:
-            routernumber = (routerchoice - 1) * 3
-        print (routers[routernumber],routers[routernumber + 1],routers[routernumber + 2])
+        routerchoice = input('Zadej nazev routeru: ')
+        print (routerlist[routerchoice])
     #
     else:
         print('Neplatná volba')
