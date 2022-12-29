@@ -3,7 +3,7 @@ Requested functions are as follows:
 
 1.) 3D environment modeling and generation
 
-2.) Wireless transmitters/receiver modeling
+2.) Wireless transmitter/receiver modeling
 
 3.) Network traffic simulation
 
