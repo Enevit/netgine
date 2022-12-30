@@ -1,5 +1,10 @@
 import json
 import math
+import numpy as np
+import matplotlib as mpl
+import matplotlib.pyplot as plot
+mpl.rcParams["font.size"] = 30
+plot.style.use('default')
 #------------------------------------------------------------------------------------------------------------ D E F I N I C E   R O U T E R Ů ----------------------------------------------------------------------------------------------------------------------#
 #
 #
@@ -12,14 +17,15 @@ neighbours = []
 #
 menu = True
 while menu:
-    print('Vyber si možnost: ')
+    print('\n#------------- H L A V N Í   M E N U -------------#')
     print('1.) Vytvoření routeru') # Vyzve k zadání názvu routeru a jeho souřadnic X a Y - následně všechny tři hodnoty uloží do dictionary routerlist
     print('2.) Najít sousedy') # Porovná souřadnice dvou vybraných routerů - pokud mají rozdíly souřadnic na obou osách menší než 100 přidá druhý router do dictionary neighbours
     print('3.) Vzdálenost mezi routery') # Vyzve k zadání dvou routerů, porovná jejich souřadnice a výpiše vzdálenost vzdušnou čarou
     print('4.) Délka cesty') # Vyzve k zadání routerů jak jdou po sobě - během zadávání počítá cestu trasy a vypisuje vzdálenost vzdušnou čarou a hodnoty spojení
     print('5.) Výpis všech routerů') # Vypíše všechny routery z dictionary routerlist a jejich počet
     print('6.) Souřadnice konkrétního routeru') # Vyzve k zadání routeru a vrátí jeho hodnoty z dictionary routerlist
-    vyber = int(input('Vyber možnost: '))
+    vyber = int(input('\nVyber možnost: '))
+    print('\n')
     #-------------------------------------------------------------------------------------------------- Vytvoření routeru se zadáním názvu a souřadnic -------------------------------------------------------------------------------------------------------------#
     if vyber == 1:
         routername = str(input('Zadej název routeru: '))
@@ -60,7 +66,7 @@ while menu:
         firstrouter = input('Zadej název výchozího routeru: ')
         xdef = routerlist[firstrouter]['coordx']
         ydef = routerlist[firstrouter]['coordy']
-        #Cyklus pro zadání dalších routerů
+        #-------------------Cyklus pro zadání dalších routerů------------------------#
         while opakovani < (routeramount - 1):
             opakovani += 1
             #OSA X Router 1 (výchozí = 0, rozsah 1 - 100)
@@ -73,7 +79,7 @@ while menu:
             xdef = xnext
             ydef = ynext
         print ('\nDélka přímé cesty mezi zadanými', routeramount,'routery je: ',dst,'metrů\n')
-        #
+        #---------------------------------------------------------------------------#
         #
         #
         #
@@ -136,14 +142,70 @@ while menu:
         print ('Latence = ', lat,'ms\n')
     #-------------------------------------------------------------------------------------------------------- Vypsání všech zadaných routerů -----------------------------------------------------------------------------------------------------------------------#
     elif vyber == 5:
-        vypisrouteru = json.dumps(routerlist,sort_keys=True, indent=4)
-        print('\nSeznam routerů: \n\n',vypisrouteru,'\n')
         pocetrouteru = int(len(routerlist))
-        print('Celkový počet routerů je:', pocetrouteru,'\n')
+        print('#------------- V Ý P I S   R O U T E R Ů -------------#')
+        #cyklus iterující skrz hlavní slovník, routername a routerinfo jsou random proměnný, který takhle v páru způsobují vypisování tuples (párů key:value) ze slovníku
+        for routername, routerinfo in routerlist.items():
+            print('\n')
+            opakovani = int(0)
+            for key in routerinfo:
+                opakovani += 1
+                #vytiskne "key : value[key]" za každej key v hlavním dictionary
+                print(key + ':', routerinfo[key])
+                if ((opakovani % 3) - 1) == 0:
+                    routername = routerinfo[key]
+                    print(routername)
+                elif ((opakovani % 3) - 2) == 0:
+                    #proměnná kam se zapíše hodnota X
+                    xdef = routerinfo[key]
+                    print(xdef)
+                elif (opakovani % 3) == 0:    
+                    #proměnná kam se zapíše hodnota Y
+                    ydef = routerinfo[key]
+                    print(ydef)                
+            # -----------VYKRESLOVACÍ SOUČÁST-----------#
+            colors = 10
+            sizes = 10
+            #fig, ax = plot.subplots()
+            #fig = plot.figure()
+            #ax = fig.add_subplot()
+
+            plot.scatter(xdef, ydef, s=sizes, c=colors, vmin=0, vmax=100)
+            #Nastavení chování zobrazených os - xlim je jejich rozsah, xticks je rozsah popisu číslování os (proč by tohle někdo chtěl jako parametr?)
+            #plot.set(xlim=(0, 100), xticks=np.arange(0, 100),
+                   #ylim=(0, 100), yticks=np.arange(0, 100))
+            plot.title('Výpis všech routerů')
+            plot.text(xdef, ydef, routername)
+        plot.xlim(0, 100)
+        plot.ylim(0, 100)
+        plot.show()
+        print('\nCelkový počet routerů je:', pocetrouteru,'\n')
+
+        
+        print('#-----------------------------------------------------#\n')
+        
     #----------------------------------------------------------------------------------------------------------Vypsání konkrétního routeru--------------------------------------------------------------------------------------------------------------------------#
     elif vyber == 6:
-        routerchoice = input('Zadej nazev routeru: ')
-        print (routerlist[routerchoice])
+        print('#-- V Ý P I S   K O N K R É T N Í H O   R O U T E R U --#')
+        routerchoice = input('Zadej název routeru: ')
+        xdef = routerlist[routerchoice]['coordx']
+        ydef = routerlist[routerchoice]['coordy']
+        print('\n',routerchoice,'je na souřadnicích X:',xdef,'Y:',ydef)
+        #-----------VYKRESLOVACÍ SOUČÁST-----------#
+        colors = 10
+        sizes = 10
+        fig, ax = plot.subplots()
+
+        ax.scatter(xdef, ydef, s=sizes, c=colors, vmin=0, vmax=100)
+        #Nastavení chování zobrazených os - xlim je jejich rozsah, xticks je rozsah popisu číslování os (proč by tohle někdo chtěl jako parametr?)
+        ax.set(xlim=(0, 100), xticks=np.arange(0, 100),
+               ylim=(0, 100), yticks=np.arange(0, 100), label = (routerchoice))
+        plot.title('Výpis konkrétního routeru')
+        plot.text(xdef, ydef, routerchoice)
+        plot.show()
+
+        #print (routerlist[routerchoice])
+        print('#-----------------------------------------------------#\n')
     #
     else:
         print('Neplatná volba')
