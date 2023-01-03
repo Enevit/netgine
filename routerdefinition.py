@@ -36,25 +36,24 @@ while menu:
     #----------------------------------------------------------------------------------------------------------- Hledání sousedních routerů ------------------------------------------------------------------------------------------------------------------------#
     elif vyber == 2:
         #Proměnná pro opakovní cyklu
-        opakovani = int(1)
+        opakovani = int(0)
         #Množství routerů (routeramount) = počet hodnot v globálním arrayi routerlist / 3. Používá se pro určení počtu opakování while cyklu
         pocetrouteru = int(len(routerlist))
         #Volba routeru (routerchoice) je integer použitý k výběru konkrétní hodnoty z globálního arraye routers
-        routerchoicea = input('Zadej název prvního routeru: ')
-        routerchoiceb = input('Zadej název druhého routeru: ')
-        while opakovani == 1:
-            # Pokud jsou obě souřadnice následujícího routeru v globálním arrayi routers blíž než 100, přidej tento následující router do globálního arraye neighbours
-            routacoordx = routerlist[routerchoicea]['coordx']
-            routbcoordx = routerlist[routerchoiceb]['coordx']
-            routacoordy = routerlist[routerchoicea]['coordy']
-            routbcoordy = routerlist[routerchoiceb]['coordy']
-            if abs((routacoordx) - (routbcoordx)) < 100 and abs((routacoordy) - (routbcoordy)) < 100:
-                print ('Router', routerlist[routerchoicea],' je sousedem routeru', routerlist[routerchoiceb])
-                neighbours.append(routerchoiceb)
-                opakovani += 1
+        routerchoice = input('Zadej název routeru pro který chceš najít sousedy: ')
+        xdef = routerlist[routerchoice]['coordx']
+        ydef = routerlist[routerchoice]['coordy']
+        for routername, routerinfo in routerlist.items():
+            xnew = routerinfo['coordx']
+            ynew = routerinfo['coordy']
+            if routerinfo['routername'] == routerchoice:
+                print('\n')
+            elif abs((xdef) - (xnew)) < 100 and abs((ydef) - (ynew)) < 100:
+                print(routerinfo['routername'],'je sousedem routeru', routerchoice)
+                print('\n')
             else:
-                print ('Router', routerlist[routerchoicea],' neni sousedem routeru', routerlist[routerchoiceb])
-                opakovani += 1
+                print(routerinfo['routername'],'neni sousedem routeru', routerchoice)
+                print('\n')
     #------------------------------------------------------------------------------------------------------ Výpočet délky cesty a hodnot spojení -------------------------------------------------------------------------------------------------------------------#
     elif vyber == 4:
         #VÝCHOZÍ PROMĚNNÁ PRO OPAKOVÁNÍ CYKLU PRO VÝPOČET VZDÁLENOSTI
